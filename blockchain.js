@@ -108,7 +108,8 @@ module.exports = {
 
     DeployContract: async function (account_id, private_key, contract_file) {
         try {
-            const path = this.GetContractPath(contract_file);
+            // const path = this.GetContractPath(contract_file);
+            const path = `./near-api/contracts/${contract_file}`;
             if (!fs.existsSync(path))
                 return api.reject("Contract not found");
 
