@@ -108,7 +108,7 @@ module.exports = {
 
     DeployContract: async function (account_id, private_key, contract_file) {
         try {
-            const path = `contracts/${contract_file}`;
+            const path = this.GetContractPath(contract_file);
             if (!fs.existsSync(path))
                 return api.reject("Contract not found");
 
@@ -128,19 +128,22 @@ module.exports = {
             return api.reject(e);
         }
     },
+    
+    GetContractPath: function (contract_file) {
+        try {
+            const { environment } = settings;
+            if (environment === 'development') {
+                return `./near-api/contracts/${contract_file}`;
+            }
+            return `contracts/${contract_file}`;
+        } catch (e) {
+            return api.reject(e);
+        }
+    },
 
     Call: async function (account_id, private_key, attached_tokens, attached_gas, recipient, method, params, network, rpc_node, headers) {
         try {
             const account = await this.GetAccountByKey(account_id, private_key, network, rpc_node, headers);
-            console.log('\n\n\n\n#account_id', account_id);
-            console.log('#private_key', private_key);
-            console.log('#attached_tokens', attached_tokens);
-            console.log('#attached_gas', attached_gas);
-            console.log('#recipient', recipient);
-            console.log('#method', method);
-            console.log('#params', params);
-            console.log('#network', account);
-
             return await account.functionCall({
                 contractId: recipient,
                 methodName: method,

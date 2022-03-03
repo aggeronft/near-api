@@ -69,8 +69,6 @@ const init = async function (contract, supply_cap_by_type) {
 };
 
 const mint = async function (contract, token) {
-    console.log('MINT contract:', contract);
-    console.log('MINT token:', token);
     const body = {
         method: 'nft_mint',
         contract: contract,
@@ -87,8 +85,6 @@ const mint = async function (contract, token) {
         attached_gas: "100000000000000",
         attached_tokens: "20000000000000000000000"
     };
-
-    console.log('MINT::', body);
 
     return await PostResponse("call", body);
 };

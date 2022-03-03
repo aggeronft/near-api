@@ -95,7 +95,6 @@ function App() {
     }
 
     const GetResponseFromNear = async (method, body) => {
-        console.log("GetResponseFromNear")
         const t0 = performance.now();
         setProcessing(true);
 
@@ -129,9 +128,6 @@ function App() {
                 const query = JSON.parse(JSON.stringify(queryString.parse(location.search)));
                 if (query && query.hasOwnProperty("q")) {
                     codec.decompress(query.q).then(async (json) => {
-                        console.log("Loading url query...");
-                        console.log(json);
-                        console.log(`near view ${json.contract} ${json.method} '${JSON.stringify(json.params)}'`);
                         setRequest(`near view ${json.contract} ${json.method} '${JSON.stringify(json.params)}'`);
                         setViewNetworkTestnet(json.rpc_node !== MAINNET_RPC);
                         await GetResponseFromNear("view", json);
@@ -153,7 +149,6 @@ function App() {
         codec.compress(request).then(compressed_string => {
             const url = location.protocol + '//' + location.host + location.pathname + '?q=' + compressed_string;
             window.history.replaceState({}, document.title, url);
-            console.log(url)
         });
     }
 

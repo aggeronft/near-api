@@ -59,14 +59,27 @@ npm install
 
 3. Configure `near-api-server.config.json`
 
-Default settings:
+Local environment:
 
 ```json
 {
   "server_host": "localhost",
   "server_port": 3000,
   "rpc_node": "https://rpc.testnet.near.org",
-  "init_disabled": true
+  "init_disabled": true,
+  "environment": "local"
+}
+```
+
+Development environment:
+
+```json
+{
+  "server_host": "http://nearapi.dev.aggero.io",
+  "server_port": 3000,
+  "rpc_node": "https://rpc.testnet.near.org",
+  "init_disabled": true,
+  "environment": "development"
 }
 ```
 
