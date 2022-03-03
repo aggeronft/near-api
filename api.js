@@ -1,4 +1,8 @@
-const CONFIG_PATH = './near-api-server.config.json';
+// Local environment 
+// const CONFIG_PATH = './near-api-server.config.json';
+
+// Development environment 
+const CONFIG_PATH = './near-api/near-api-server.config.json';
 
 module.exports = {
     CONFIG_PATH,
