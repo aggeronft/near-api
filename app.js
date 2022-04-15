@@ -277,7 +277,6 @@ const init = async () => {
         method: 'POST',
         path: '/mint_nft',
         handler: async (request) => {
-            console.log('\n\n\nMINT_NFT_PAYLOAD:', request.payload);
             let {min, max} = request.payload;
 
             if (!min || !max) min = max = 0;
@@ -299,12 +298,8 @@ const init = async () => {
 
                 if (tx) {
                     if (min === max) {
-                        console.log('tokenId:', tokenId);
-                        console.log('contract:', contract);
                         let create_token = await token.ViewNFT(tokenId, contract);
-                        console.log('create_token:', create_token, '\n\n\n');
                         create_token.token_id = tokenId;
-                        console.log('create_token.token_id:', tokenId, '\n\n\n');
                         response.push({token: create_token, tx: tx});
                     } else {
                         response.push({tx: tx});
