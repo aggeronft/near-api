@@ -66,8 +66,7 @@ Local environment:
   "server_host": "localhost",
   "server_port": 3000,
   "rpc_node": "https://rpc.testnet.near.org",
-  "init_disabled": true,
-  "environment": "local"
+  "init_disabled": true
 }
 ```
 
@@ -78,8 +77,7 @@ Development environment:
   "server_host": "http://nearapi.dev.aggero.io",
   "server_port": 3000,
   "rpc_node": "https://rpc.testnet.near.org",
-  "init_disabled": true,
-  "environment": "development"
+  "init_disabled": true
 }
 ```
 
