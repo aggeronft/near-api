@@ -413,7 +413,8 @@ const init = async () => {
                 receiver_id,
                 meta,
                 callback_url,
-                network
+                network,
+                batch_transactions,
             } = request.payload;
 
             return blockchain.GetSignUrl(
@@ -426,7 +427,8 @@ const init = async () => {
                 receiver_id,
                 meta,
                 callback_url,
-                network
+                network,
+                batch_transactions,
             );
         },
     });
