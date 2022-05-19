@@ -20,53 +20,47 @@ module.exports = {
     receiver_id,
     meta,
     callback_url,
-    network
+    network,
+    batch_transactions
   ) {
     try {
       if (!network) {
         network = "mainnet";
       }
 
-      let deposit_value;
-      if (deposit_yocto >= 0) {
-        deposit_value = deposit_yocto;
-      } else if (typeof deposit == "string") {
-        deposit_value = deposit;
+      const txs = [];
+
+      if (batch_transactions && batch_transactions.length > 0) {
+        for (const bt of batch_transactions) {
+          await this.MakeTransaction(
+            bt.account_id,
+            bt.method,
+            bt.params,
+            bt.deposit,
+            bt.deposit_yocto,
+            bt.gas,
+            bt.receiver_id,
+            network
+          ).then((tx) => txs.push(tx));
+        }
       } else {
-        deposit_value = nearApi.utils.format.parseNearAmount(`${deposit}`);
+        await this.MakeTransaction(
+          account_id,
+          method,
+          params,
+          deposit,
+          deposit_yocto,
+          gas,
+          receiver_id,
+          network
+        ).then((tx) => txs.push(tx));
       }
 
-      const actions = [
-        method === "!transfer"
-          ? nearApi.transactions.transfer(deposit_value)
-          : nearApi.transactions.functionCall(
-              method,
-              Buffer.from(JSON.stringify(params)),
-              gas,
-              deposit_value
-            ),
-      ];
-      const keypair = nearApi.utils.KeyPair.fromRandom("ed25519");
-      const provider = new nearApi.providers.JsonRpcProvider({
-        url: "https://rpc." + network + ".near.org",
-      });
-      const block = await provider.block({
-        finality: "final",
-      });
-      const txs = [
-        nearApi.transactions.createTransaction(
-          account_id,
-          keypair.publicKey,
-          receiver_id,
-          1,
-          actions,
-          nearApi.utils.serialize.base_decode(block.header.hash)
-        ),
-      ];
       const newUrl = new URL(
         "sign",
         "https://wallet." + network + ".near.org/"
       );
+      
       newUrl.searchParams.set(
         "transactions",
         txs
@@ -86,6 +80,61 @@ module.exports = {
       }
 
       return newUrl.href;
+    } catch (e) {
+      return api.reject(e);
+    }
+  },
+
+  /**
+   * @return {object}
+   */
+  MakeTransaction: async function (
+    account_id,
+    method,
+    params,
+    deposit,
+    deposit_yocto,
+    gas,
+    receiver_id,
+    network
+  ) {
+    try {
+      let deposit_value;
+      if (deposit_yocto >= 0) {
+        deposit_value = deposit_yocto;
+      } else if (typeof deposit == "string") {
+        deposit_value = deposit;
+      } else {
+        deposit_value = nearApi.utils.format.parseNearAmount(`${deposit}`);
+      }
+
+      const actions = [
+        method === "!transfer"
+          ? nearApi.transactions.transfer(deposit_value)
+          : nearApi.transactions.functionCall(
+              method,
+              Buffer.from(JSON.stringify(params)),
+              gas,
+              deposit_value
+            ),
+      ];
+
+      const keypair = nearApi.utils.KeyPair.fromRandom("ed25519");
+      const provider = new nearApi.providers.JsonRpcProvider({
+        url: "https://rpc." + network + ".near.org",
+      });
+      const block = await provider.block({
+        finality: "final",
+      });
+
+      return nearApi.transactions.createTransaction(
+        account_id,
+        keypair.publicKey,
+        receiver_id,
+        1,
+        actions,
+        nearApi.utils.serialize.base_decode(block.header.hash)
+      );
     } catch (e) {
       return api.reject(e);
     }
